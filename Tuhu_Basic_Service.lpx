@@ -5,7 +5,6 @@
 
 [Rewrite]
 # 个性化商品推荐信息流，不影响商品详情、购物车和订单。
-request if ${url} ~= /^https:\/\/gateway\.tuhu\.cn\/mkt\/mkt-mlp-recommend-api\/recommend\/api\/gylApi(?:\?|$)/i then reject_dict(200)
 
 # 广告打开行为统计，不影响广告方案配置或购物交易。
 request if ${url} ~= /^https:\/\/gateway\.tuhu\.cn\/mkt\/mkt-advertisement-service\/ext\/advertisement\/see\/openapp(?:\?|$)/i then reject_dict(200)
