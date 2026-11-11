@@ -1,0 +1,6 @@
+#!name=京东首页信息流广告补充清理
+#!desc=仅清理 uniformRecommend9c 响应中 extension_id.ad=9960 的广告商品卡片；保留普通商品及其他接口。
+#!category=去广告
+
+[Script]
+http-response ^https?:\/\/api\.m\.jd\.com\/client\.action\? script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/JD_feed_ads_remove.js,timeout=10,requires-body=true,tag=京东首页信息流广告补充清理,enable=true
