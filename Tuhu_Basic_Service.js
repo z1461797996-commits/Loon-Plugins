@@ -1,10 +1,16 @@
 /*
- * Tuhu Basic Service - Base64-aware marketing response cleanup.
- * Handles only queryScheme and personal-center CMS responses.
- * IMPORTANT: does not intercept gylApi; homepage feed/pagination must pass through.
+ * Tuhu Basic Service v2
+ * Only cleans the two confirmed marketing responses.
+ * Never intercepts or modifies gylApi homepage feed/pagination.
+ * Supports plain JSON and Base64(JSON) response bodies.
  */
 (function () {
   const url = ($request && $request.url) || "";
+  const path = url.split("?")[0];
+  const isScene = /\/mkt\/mkt-scene-marketing-service\/api\/scene\/queryScheme$/i.test(path);
+  const isCms = /\/cl\/cl-common-api\/api\/personalCenter\/getCmsModuleList$/i.test(path);
+  if (!isScene && !isCms) return $done({});
+
   const body = $response && $response.body;
   if (typeof body !== "string" || !body || body.length > 2000000) return $done({});
 
@@ -45,7 +51,7 @@
     return out;
   }
 
-  let obj, wasBase64 = false;
+  let obj, encoded = false;
   try {
     obj = JSON.parse(body);
   } catch (e) {
@@ -53,17 +59,18 @@
       const decoded = decodeB64Utf8(body);
       if (!decoded) return $done({});
       obj = JSON.parse(decoded);
-      wasBase64 = true;
+      encoded = true;
     } catch (e2) {
       return $done({});
     }
   }
-  if (!obj || typeof obj !== "object" || !obj.data || typeof obj.data !== "object") return $done({});
+  if (!obj || typeof obj !== "object" || !obj.data || typeof obj.data !== "object") {
+    return $done({});
+  }
 
   let changed = false;
-  const path = url.split("?")[0];
 
-  if (/\/mkt\/mkt-scene-marketing-service\/api\/scene\/queryScheme$/i.test(path)) {
+  if (isScene) {
     const data = obj.data;
     if (Array.isArray(data.moduleActionList)) {
       const before = data.moduleActionList.length;
@@ -79,7 +86,7 @@
     }
   }
 
-  if (/\/cl\/cl-common-api\/api\/personalCenter\/getCmsModuleList$/i.test(path)) {
+  if (isCms) {
     const data = obj.data;
     if (Array.isArray(data.cmsList)) {
       const blocked = { 148: true, 173: true, 154: true, 7: true, 35: true, 13: true, 17: true };
@@ -95,5 +102,5 @@
 
   if (!changed) return $done({});
   const output = JSON.stringify(obj);
-  return $done({ body: wasBase64 ? encodeB64Utf8(output) : output });
+  return $done({ body: encoded ? encodeB64Utf8(output) : output });
 })();
