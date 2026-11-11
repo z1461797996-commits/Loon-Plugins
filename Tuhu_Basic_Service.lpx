@@ -1,0 +1,21 @@
+#!name=途虎养车基础服务精简版
+#!desc=清理 HAR 确认的开屏/首页/我的页面营销弹窗、会员推广、营销横幅、浮窗及猜你喜欢；保留车辆、门店、订单、商品、养护服务和支付。
+#!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/tuhu-lite-icon.svg
+#!category=去广告
+
+[Rewrite]
+# 个性化商品推荐信息流，不影响商品详情、购物车和订单。
+request if ${url} ~= /^https:\/\/gateway\.tuhu\.cn\/mkt\/mkt-mlp-recommend-api\/recommend\/api\/gylApi(?:\?|$)/i then reject_dict(200)
+
+# 广告打开行为统计，不影响广告方案配置或购物交易。
+request if ${url} ~= /^https:\/\/gateway\.tuhu\.cn\/mkt\/mkt-advertisement-service\/ext\/advertisement\/see\/openapp(?:\?|$)/i then reject_dict(200)
+
+[Script]
+# 只修改 HAR 确认的开屏/首页/我的营销方案响应
+http-response ^https?:\/\/gateway\.tuhu\.cn\/mkt\/mkt-scene-marketing-service\/api\/scene\/queryScheme(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tuhu_Basic_Service.js,timeout=10,requires-body=true,tag=途虎场景营销弹窗清理,enable=true
+
+# 只清理个人中心营销模块，保留个人信息、资产、订单、车辆等模块
+http-response ^https?:\/\/gateway\.tuhu\.cn\/cl\/cl-common-api\/api\/personalCenter\/getCmsModuleList(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tuhu_Basic_Service.js,timeout=10,requires-body=true,tag=途虎个人中心营销模块清理,enable=true
+
+[MITM]
+hostname = gateway.tuhu.cn
