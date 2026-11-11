@@ -1,20 +1,35 @@
-#!name=高德地图精简去广告
-#!desc=精准屏蔽高德 AI 推荐/问答入口及已抓包确认的开屏广告请求；保留地图、导航、打车和路线规划。
+#!name=高德地图导航精简版
+#!desc=保留地图显示、地点搜索、路线规划、驾车/步行导航及导航语音；屏蔽 AI 助手、AI 对话、打车业务、优惠券、会员营销及已识别商业广告请求。
 #!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/amap-lite-icon.svg
 #!category=去广告
 
-[Rewrite]
-# AI 首页快捷问答与探索内容
-request if ${url} ~= /^https:\/\/ai\.amap\.com\/v1\/ai_rec\/(?:home_qs|home_explore)(?:\?|$)/ then reject(403)
+[Rule]
+# ==========================================
+# AI 助手 / AI 推荐 / AI 对话
+# ==========================================
+DOMAIN,ai.amap.com,REJECT
+URL-REGEX,^wss?://cmg-ws-mit\.amap\.com(?::443)?/ws/voice_chat(?:\?|$),REJECT
+DOMAIN,msg-ime.xfinfr.com,REJECT
+DOMAIN,d.xfinfr.com,REJECT
 
-# 导航首页 AI 问答入口
-request if ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/faas\/amap-navigation\/main-page-aiqs(?:\?|$)/ then reject(403)
+# ==========================================
+# 打车业务（不保留叫车功能）
+# ==========================================
+URL-REGEX,^https?://m5-zb\.amap\.com/ws/boss/order/car(?:/|\?|$),REJECT
 
-# 高德广告素材请求
-request if ${url} ~= /^https:\/\/optimus-ads\.amap\.com\// then reject(403)
+# ==========================================
+# 优惠券 / 会员联合营销
+# ==========================================
+URL-REGEX,^https?://m5-zb\.amap\.com/ws/ccoupon/amap/preload(?:\?|$),REJECT
+URL-REGEX,^https?://m5-zb\.amap\.com/ws/vip/jointly-channel(?:\?|$),REJECT
 
-# 高德开屏商业广告素材请求
-request if ${url} ~= /^https:\/\/amap-aos-info-nogw\.amap\.com\/ws\/aos\/alimama\/splash_screen_rt(?:\?|$)/ then reject(403)
+# ==========================================
+# 开屏及商业广告
+# ==========================================
+URL-REGEX,^https?://amap-aos-info-nogw\.amap\.com/ws/aos/alimama/splash_screen_rt(?:\?|$),REJECT
+URL-REGEX,^https?://m5\.amap\.com/ws/shield/dsp/app/startup/init(?:\?|$),REJECT
+DOMAIN,optimus-ads.amap.com,REJECT
 
-[MITM]
-hostname = ai.amap.com,m5.amap.com,optimus-ads.amap.com,amap-aos-info-nogw.amap.com
+# ==========================================
+# 不拦截：地图瓦片 / 地点搜索 / 路线规划 / 导航 / 导航语音资源
+# ==========================================
