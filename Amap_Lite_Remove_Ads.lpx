@@ -1,0 +1,17 @@
+#!name=高德地图精简去广告
+#!desc=屏蔽高德首页 AI 推荐/AI 问答入口及已抓包确认的广告素材请求；保留地图瓦片、路线规划、导航、打车等核心服务。
+#!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/amap-lite-icon.svg
+#!category=去广告
+
+[Rule]
+# 首页 AI 推荐 / AI 探索 / 快捷问答
+URL-REGEX,^https?://ai\.amap\.com/v1/ai_rec/(home_qs|home_explore)(\?|$),REJECT
+
+# 导航首页 AI 问答入口（按 HAR 中实际请求路径）
+URL-REGEX,^https?://m5\.amap\.com/ws/faas/amap-navigation/main-page-aiqs(\?|$),REJECT
+
+# 高德广告素材服务器
+DOMAIN,optimus-ads.amap.com,REJECT
+
+# 高德开屏商业广告请求
+URL-REGEX,^https?://amap-aos-info-nogw\.amap\.com/ws/aos/alimama/splash_screen_rt(\?|$),REJECT
