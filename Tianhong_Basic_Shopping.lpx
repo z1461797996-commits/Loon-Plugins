@@ -5,22 +5,22 @@
 
 [Rewrite]
 # 明确广告接口：用请求重写拦截，避免只依赖策略组分流
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/advert\/side\/get(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/message\/popup\/get(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/registration\/coupon\/v2\/get\/newbie\/entrance\/banner(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/registration\/coupon\/v2\/getPopInfo(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/member\/activity-card\/config(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/member\/platinum-card\/pop-window\/get(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/message\/get-activity-info(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/advert-ms-app\/advert\/list(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/top-banner\/get(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/product\/choiceness-recommend\/list(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/product\/msgsenter\/recommend\/list(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/product\/v2\/cart\/personal-recommend\/list(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/ai-diet-api\/ai-diet\/entrance\/home-page\/show(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/marketing-ms-app\/app\/start\/ad\/query(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/marketing\/app\/start\/advertising\/get(?:\?|$)/i then reject_dict(200)
-request if \${url} ~= /^https:\/\/api\.tianhong\.cn\/marketing-ms-app\/appPopWindows\/appSmallPopup(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/advert\/side\/get(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/message\/popup\/get(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/registration\/coupon\/v2\/get\/newbie\/entrance\/banner(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/registration\/coupon\/v2\/getPopInfo(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/member\/activity-card\/config(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/member\/platinum-card\/pop-window\/get(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/message\/get-activity-info(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/advert-ms-app\/advert\/list(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/top-banner\/get(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/product\/choiceness-recommend\/list(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/product\/msgsenter\/recommend\/list(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/product\/v2\/cart\/personal-recommend\/list(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/ai-diet-api\/ai-diet\/entrance\/home-page\/show(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/marketing-ms-app\/app\/start\/ad\/query(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/marketing\/app\/start\/advertising\/get(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/marketing-ms-app\/appPopWindows\/appSmallPopup(?:\?|$)/i then reject_dict(200)
 
 [Script]
 # 解析 dj_module_api/fetch 的 Base64(JSON)，清除活动/逛逛/营销模块
