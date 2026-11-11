@@ -23,15 +23,9 @@ request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/th-api\/v1\/marketing\/app\/
 request if ${url} ~= /^https:\/\/api\.tianhong\.cn\/marketing-ms-app\/appPopWindows\/appSmallPopup(?:\?|$)/i then reject_dict(200)
 
 [Script]
-# 解析 dj_module_api/fetch 的 Base64(JSON)，清除活动/逛逛/营销模块
-http-response ^https?:\/\/dj\.tianhong\.cn\/dj_module_api\/fetch(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tianhong_Basic_Shopping.js,timeout=20,requires-body=true,tag=天虹动态首页营销清理,enable=true
-# 我的页只移除营销权益卡片，保留会员身份信息
-http-response ^https?:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/member\/home(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tianhong_Basic_Shopping.js,timeout=20,requires-body=true,tag=天虹会员营销清理,enable=true
-# 消息列表只移除“活动优惠”会话，保留服务通知和交易物流
-http-response ^https?:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/message\/recent-contact\/page(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tianhong_Basic_Shopping.js,timeout=20,requires-body=true,tag=天虹活动消息清理,enable=true
-
-# 说明：不拦截登录、门店、搜索、商品详情、商品主图、购物车主列表、
-# 库存/价格、订单、配送、支付及售后接口；不拦截 api.tianhong.cn 整个域名。
+# 只处理动态页面接口；逛一逛页面原样放行，避免清空内容
+http-response ^https?:\/\/dj\.tianhong\.cn\/dj_module_api\/fetch(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tianhong_Basic_Shopping.js,timeout=8,requires-body=true,tag=天虹动态首页精简,enable=true
 
 [MITM]
-hostname = api.tianhong.cn,dj.tianhong.cn
+# 仅对动态页面响应启用 MITM；广告请求本身由上方 Rewrite 拦截
+hostname = dj.tianhong.cn
