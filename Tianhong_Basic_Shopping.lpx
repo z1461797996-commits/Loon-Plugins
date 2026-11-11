@@ -32,3 +32,6 @@ http-response ^https?:\/\/api\.tianhong\.cn\/scrm\/v1\/api\/message\/recent-cont
 
 # 说明：不拦截登录、门店、搜索、商品详情、商品主图、购物车主列表、
 # 库存/价格、订单、配送、支付及售后接口；不拦截 api.tianhong.cn 整个域名。
+
+[MITM]
+hostname = api.tianhong.cn,dj.tianhong.cn
