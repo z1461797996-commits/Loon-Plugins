@@ -1,35 +1,32 @@
 #!name=高德地图导航精简版
-#!desc=保留地图显示、地点搜索、路线规划、驾车/步行导航及导航语音；屏蔽 AI 助手、AI 对话、打车业务、优惠券、会员营销及已识别商业广告请求。
+#!desc=严格精简高德：保留地图、搜索、路线规划、导航及导航语音；拦截 AI、AI 语音对话、打车、优惠券、会员营销、商业广告、首页推广入口及非导航工具入口。请先测试，部分首页功能会消失。
 #!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/amap-lite-icon.svg
 #!category=去广告
 
 [Rule]
-# ==========================================
 # AI 助手 / AI 推荐 / AI 对话
-# ==========================================
 DOMAIN,ai.amap.com,REJECT
-URL-REGEX,^wss?://cmg-ws-mit\.amap\.com(?::443)?/ws/voice_chat(?:\?|$),REJECT
+DOMAIN,cmg-ws-mit.amap.com,REJECT
 DOMAIN,msg-ime.xfinfr.com,REJECT
 DOMAIN,d.xfinfr.com,REJECT
 
-# ==========================================
-# 打车业务（不保留叫车功能）
-# ==========================================
+# 打车及叫车
 URL-REGEX,^https?://m5-zb\.amap\.com/ws/boss/order/car(?:/|\?|$),REJECT
 
-# ==========================================
 # 优惠券 / 会员联合营销
-# ==========================================
 URL-REGEX,^https?://m5-zb\.amap\.com/ws/ccoupon/amap/preload(?:\?|$),REJECT
 URL-REGEX,^https?://m5-zb\.amap\.com/ws/vip/jointly-channel(?:\?|$),REJECT
 
-# ==========================================
 # 开屏及商业广告
-# ==========================================
 URL-REGEX,^https?://amap-aos-info-nogw\.amap\.com/ws/aos/alimama/splash_screen_rt(?:\?|$),REJECT
 URL-REGEX,^https?://m5\.amap\.com/ws/shield/dsp/app/startup/init(?:\?|$),REJECT
 DOMAIN,optimus-ads.amap.com,REJECT
 
-# ==========================================
-# 不拦截：地图瓦片 / 地点搜索 / 路线规划 / 导航 / 导航语音资源
-# ==========================================
+# 非导航首页工具/运营入口列表
+URL-REGEX,^https?://sns\.amap\.com/ws/opc/tools/list(?:\?|$),REJECT
+
+# 通知红点/首页运营提示
+URL-REGEX,^https?://center\.amap\.com/ws/message/notice/list(?:\?|$),REJECT
+
+[Script]
+http-response ^https?:\/\/m5\.amap\.com\/ws\/shield\/dsp\/app\/startup\/init script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Amap_Navigation_Only.js,timeout=10,requires-body=true,tag=高德启动营销内容清理,enable=true
