@@ -1,49 +1,61 @@
 #!name=天虹基础购物精简版
-#!desc=严格清理天虹开屏、弹窗、广告、优惠券入口、会员营销、活动推广及商品推荐；保留登录、门店、商品搜索/详情、购物车、下单、订单和支付。部分营销/会员页面将不可用。
+#!desc=精准屏蔽天虹开屏、广告、侧边推广、活动弹窗、新人券入口、会员营销、AI入口及猜你喜欢；保留登录、门店、搜索、商品详情、购物车、下单、订单、配送和支付。
 #!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/tianhong-lite-icon.svg
 #!category=去广告
 
 [Rule]
 # ==========================================
-# 天虹专属广告/营销接口
-# 精确拦截，不屏蔽 api.tianhong.cn 整个主机
-# ==========================================
-
 # 开屏广告
+# ==========================================
 URL-REGEX,^https?://api\.tianhong\.cn/marketing-ms-app/app/start/ad/query(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/th-api/v1/marketing/app/start/advertising/get(?:\?|$),REJECT
 
-# 首页广告列表、侧边广告、横幅
+# ==========================================
+# 广告列表 / 侧边广告 / 首页横幅
+# HAR 确认 side/get 返回 sideAdInfo、sideAdImageUrl、activityId
+# ==========================================
 URL-REGEX,^https?://api\.tianhong\.cn/advert-ms-app/advert/list(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/advert/side/get(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/top-banner/get(?:\?|$),REJECT
 
-# 弹窗、新人礼包、优惠券推广入口
+# ==========================================
+# 活动消息弹窗 / 新人券 / 活动推广
+# HAR 新发现 message/popup/get 返回商品促销标题、内容和活动链接
+# ==========================================
+URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/message/popup/get(?:\?|$),REJECT
+URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/message/get-activity-info(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/marketing-ms-app/appPopWindows/appSmallPopup(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/registration/coupon/v2/getPopInfo(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/registration/coupon/v2/get/newbie/entrance/banner(?:\?|$),REJECT
-URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/message/get-activity-info(?:\?|$),REJECT
 
-# 会员卡、会员活动及营销文案
+# ==========================================
+# 会员推广卡片 / 会员营销文案 / AI 营养入口
+# 注意：不屏蔽会员身份、积分、余额、会员首页等核心接口
+# ==========================================
 URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/member/platinum-card/pop-window/get(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/member/activity-card/config(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/scrm/v1/api/member/scene/list(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/th-api/v1/member/activity/copywriter(?:\?|$),REJECT
+URL-REGEX,^https?://api\.tianhong\.cn/ai-diet-api/ai-diet/entrance/home-page/show(?:\?|$),REJECT
 
-# 首页/购物页推荐商品、猜你喜欢及活动推荐
+# ==========================================
+# 商品推荐 / 猜你喜欢
+# 保留商品搜索、商品详情、购物车商品列表及结算接口
+# ==========================================
 URL-REGEX,^https?://api\.tianhong\.cn/th-api/v1/product/choiceness-recommend/list(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/th-api/v1/product/msgsenter/recommend/list(?:\?|$),REJECT
 URL-REGEX,^https?://api\.tianhong\.cn/th-api/v1/product/v2/cart/personal-recommend/list(?:\?|$),REJECT
 
-# AI 营养/饮食营销入口
-URL-REGEX,^https?://api\.tianhong\.cn/ai-diet-api/ai-diet/entrance/home-page/show(?:\?|$),REJECT
-
-# 已在 HAR 中确认的广告图片路径
+# ==========================================
+# 明确的广告图片路径
+# 不屏蔽 assets.tianhong.cn 整个域名，避免误伤商品/订单图片
+# ==========================================
 URL-REGEX,^https?://assets\.tianhong\.cn/assets/img/advert/.*,REJECT
 
 # ==========================================
-# 保留：登录/会员身份校验、门店、商品搜索与详情、
-# 商品图片、购物车、订单、配送、支付及基础购物接口。
-# 不屏蔽 api.tianhong.cn / dj.tianhong.cn 整个域名。
-# 不屏蔽 img1.tianhong.cn 商品图片 CDN。
+# 保留基础购物所需接口：
+# 登录、门店、商品搜索/详情、商品图片、购物车主列表、
+# 库存/价格、配送、订单、支付、售后。
+# 注意：本次 HAR 中 advert/list 和部分推荐接口响应为编码/加密内容，
+# 因此按接口路径拒绝请求，不对未知密文做响应改写。
 # ==========================================
