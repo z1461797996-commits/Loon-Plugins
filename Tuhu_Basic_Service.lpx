@@ -1,5 +1,5 @@
 #!name=途虎养车基础服务精简版
-#!desc=清理 HAR 确认的开屏/首页/我的页面营销弹窗、会员推广、营销横幅、浮窗及猜你喜欢；保留车辆、门店、订单、商品、养护服务和支付。
+#!desc=清理已确认的开屏/首页/我的页面营销弹窗、会员推广、营销横幅及浮窗；保留首页商品信息流与下拉刷新、车辆、门店、订单、商品、养护服务和支付。
 #!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/tuhu-lite-icon.svg
 #!category=去广告
 
