@@ -1,0 +1,11 @@
+#!name=途虎基础服务精简版 v2
+#!desc=隔离版：仅清理确认的开屏/首页/我的页面营销方案与个人中心营销模块；不拦截首页商品推荐及 gylApi 分页。
+#!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/tuhu-lite-icon.svg
+#!category=去广告
+
+[Script]
+http-response ^https?:\/\/gateway\.tuhu\.cn\/mkt\/mkt-scene-marketing-service\/api\/scene\/queryScheme(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tuhu_Basic_Service_v2.js,timeout=10,requires-body=true,tag=途虎场景营销清理 v2,enable=true
+http-response ^https?:\/\/gateway\.tuhu\.cn\/cl\/cl-common-api\/api\/personalCenter\/getCmsModuleList(?:\?.*)?$ script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Tuhu_Basic_Service_v2.js,timeout=10,requires-body=true,tag=途虎个人中心营销清理 v2,enable=true
+
+[MITM]
+hostname = gateway.tuhu.cn
