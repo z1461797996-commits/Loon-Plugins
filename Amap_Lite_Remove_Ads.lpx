@@ -1,40 +1,47 @@
 #!name=高德地图导航极简版
-#!desc=严格精简高德，保留地图、地点搜索、路线规划、驾车/步行导航及导航语音；屏蔽 AI、探索生活内容、打车、优惠券、会员营销、开屏广告及非导航图片内容。部分非导航页面会空白。
+#!desc=保留地图、地点搜索、路线规划、驾车/步行导航及导航语音；明确拦截 AI 探索信息流、AI 快捷问答、打车、优惠券、会员营销及已确认广告请求。探索/生活推荐内容会被隐藏。
 #!icon=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/amap-lite-icon.svg
 #!category=去广告
 
+[Rewrite]
+# HAR 已确认：home_explore 返回大型 SSE 信息流，包含公园/景点/生活推荐卡片
+request if ${url} ~= /^https:\/\/ai\.amap\.com\/v1\/ai_rec\/home_explore(?:\?|$)/i then reject_dict(200)
+
+# HAR 已确认：AI 快捷问答
+request if ${url} ~= /^https:\/\/ai\.amap\.com\/v1\/ai_rec\/home_qs(?:\?|$)/i then reject_dict(200)
+
+# AI 语音会话 WebSocket 握手
+request if ${url} ~= /^wss:\/\/cmg-ws-mit\.amap\.com(?::443)?\/ws\/voice_chat(?:\?|$)/i then reject_dict(200)
+
+# AI 辅助消息服务
+request if ${url} ~= /^https:\/\/(?:msg-ime|d)\.xfinfr\.com\//i then reject_dict(200)
+
+# 高德开屏商业广告请求
+request if ${url} ~= /^https:\/\/amap-aos-info-nogw\.amap\.com\/ws\/aos\/alimama\/splash_screen_rt(?:\?|$)/i then reject_dict(200)
+
+# 会员/优惠券营销接口
+request if ${url} ~= /^https:\/\/m5-zb\.amap\.com\/ws\/(?:ccoupon\/amap\/preload|vip\/jointly-channel)(?:\?|$)/i then reject_dict(200)
+
 [Rule]
-# AI 助手 / AI 推荐 / AI 对话 / AI 驾驶问答
+# AI 域名兜底阻断
 DOMAIN,ai.amap.com,REJECT
 DOMAIN,cmg-ws-mit.amap.com,REJECT
 DOMAIN,msg-ime.xfinfr.com,REJECT
 DOMAIN,d.xfinfr.com,REJECT
 
-# 打车 / 叫车 / 打车会话
+# 打车业务
 URL-REGEX,^https?://m5-zb\.amap\.com/ws/boss/order/car(?:/|\?|$),REJECT
-URL-REGEX,^https?://center\.amap\.com/ws/amc/server/conv/raise_list(?:\?|$),REJECT
 
-# 优惠券 / 会员 / 营销通知
-URL-REGEX,^https?://m5-zb\.amap\.com/ws/ccoupon/amap/preload(?:\?|$),REJECT
-URL-REGEX,^https?://m5-zb\.amap\.com/ws/vip/jointly-channel(?:\?|$),REJECT
-URL-REGEX,^https?://center\.amap\.com/ws/message/notice/list(?:\?|$),REJECT
-
-# 开屏及商业广告
-URL-REGEX,^https?://amap-aos-info-nogw\.amap\.com/ws/aos/alimama/splash_screen_rt(?:\?|$),REJECT
+# 已确认的商业广告素材服务器
 DOMAIN,optimus-ads.amap.com,REJECT
 
-# 探索 / 发现 / 酒店等非导航内容模块
-URL-REGEX,^https?://free-c3\.amap\.com/titan/chunk/.*/amap_bundle_hotel/.*,REJECT
-URL-REGEX,^https?://free-cache\.amap\.com/ajx/cloud-resource/.*/amap_bundle_hotel/.*,REJECT
+# 非导航首页工具入口列表
 URL-REGEX,^https?://sns\.amap\.com/ws/opc/tools/list(?:\?|$),REJECT
 
-# 探索、生活服务卡片图片资源（可能同时隐藏头像等非导航图片）
+# 探索/生活内容图片。会隐藏这类图片，也可能影响 POI 图片，不影响地图瓦片和路线计算
 DOMAIN,free-store.is.autonavi.com,REJECT
 
-# 启动初始化保留给下方响应脚本清理营销内容；不要在此处 REJECT。
+# 不拦截地图瓦片、地点搜索、路线规划、导航路线、实时路况及正常导航语音。
 
 [Script]
 http-response ^https?:\/\/m5\.amap\.com\/ws\/shield\/dsp\/app\/startup\/init script-path=https://raw.githubusercontent.com/z1461797996-commits/Loon-Plugins/main/Amap_Navigation_Only.js,timeout=10,requires-body=true,tag=高德启动营销内容清理,enable=true
-
-# 保留 render-prod-* 地图瓦片、mapstudio-data 车道数据、
-# 地点搜索、路线规划、导航路线、实时路况及正常导航语音。
