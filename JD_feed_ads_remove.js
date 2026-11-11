@@ -10,7 +10,7 @@
   const body = $response && $response.body;
 
   // 严格限定接口，避免影响京东其他 client.action 请求。
-  if (!/^https?:\\/\\/api\\.m\\.jd\\.com\\/client\\.action(?:\\?|$)/i.test(url) ||
+  if (!/^https?:\/\/api\.m\.jd\.com\/client\.action(?:\?|$)/i.test(url) ||
       !/[?&]functionId=uniformRecommend9c(?:&|$)/i.test(url)) {
     return $done({});
   }
@@ -22,7 +22,7 @@
   const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
   function decodeBase64Utf8(input) {
-    const s = input.replace(/\\s+/g, "").replace(/=+$/, "");
+    const s = input.replace(/\s+/g, "").replace(/=+$/, "");
     const bytes = [];
     let buffer = 0;
     let bits = 0;
@@ -67,12 +67,10 @@
   let parsed;
   let wasBase64 = false;
 
-  // 先尝试明文 JSON。
   try {
     parsed = JSON.parse(body);
   } catch (e) {
-    // 京东新协议：响应体整体为 Base64 编码的 JSON。
-    if (body.length % 4 !== 0 || !/^[A-Za-z0-9+/=\\r\\n]+$/.test(body)) {
+    if (body.length % 4 !== 0 || !/^[A-Za-z0-9+/=\r\n]+$/.test(body)) {
       return $done({});
     }
     try {
@@ -89,8 +87,6 @@
     return $done({});
   }
 
-  // 本次 HAR 的 uniformRecommend9c 响应中，wareInfoList 位于顶层。
-  // 兼容未来可能出现的 data 包装，但只在找到明确数组时处理。
   let target = parsed;
   if (!Array.isArray(target.wareInfoList) &&
       target.data && typeof target.data === "object" &&
@@ -111,14 +107,11 @@
       try {
         ext = JSON.parse(ext);
       } catch (e) {
-        // 无法确认广告标记时保留商品，避免误删。
         return true;
       }
     }
 
     if (!ext || typeof ext !== "object") return true;
-
-    // 仅删除 HAR 中实际确认的广告位标记；不凭曝光链接或其他字段猜测。
     return String(ext.ad) !== "9960";
   });
 
