@@ -1,7 +1,7 @@
 /*
  * 京东首页信息流广告补充清理
  * 仅处理 api.m.jd.com/client.action?functionId=uniformRecommend9c
- * 仅删除 HAR 中确认的 extension_id.ad === "9960" 商品卡片。
+ * 删除 HAR 中确认的广告标记：extension_id.ad=9960，或 itemType=66 且 uniqid.pos_id=9960。
  * 不拦截请求；不处理其他接口；解析失败或结构不符时原样放行。
  */
 
@@ -112,7 +112,28 @@
     }
 
     if (!ext || typeof ext !== "object") return true;
-    return String(ext.ad) !== "9960";
+
+    // 旧字段：部分响应直接把广告位标记放在 ad 中。
+    if (String(ext.ad) === "9960") return false;
+
+    // 当前 HAR 实测：ad 为空，但 uniqid 内部的 pos_id 为 9960。
+    // 额外要求 itemType=66，避免误删普通商品。
+    let uniqid = ext.uniqid;
+    if (typeof uniqid === "string") {
+      try {
+        uniqid = JSON.parse(uniqid);
+      } catch (e) {
+        uniqid = null;
+      }
+    }
+
+    if (item.itemType === 66 &&
+        uniqid && typeof uniqid === "object" &&
+        String(uniqid.pos_id) === "9960") {
+      return false;
+    }
+
+    return true;
   });
 
   const removed = before - target.wareInfoList.length;
